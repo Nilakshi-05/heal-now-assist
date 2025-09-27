@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Phone } from 'lucide-react';
+import { AlertTriangle, Phone, Ambulance } from 'lucide-react';
 
 interface EmergencyTimerProps {
   onEmergencyCall: () => void;
@@ -18,7 +18,8 @@ export const EmergencyTimer: React.FC<EmergencyTimerProps> = ({ onEmergencyCall,
     const interval = setInterval(() => {
       setTimeLeft((time) => {
         if (time <= 1) {
-          onEmergencyCall();
+          // Auto-call emergency services when timer reaches 0
+          handleEmergencyCall();
           return 0;
         }
         return time - 1;
@@ -36,6 +37,14 @@ export const EmergencyTimer: React.FC<EmergencyTimerProps> = ({ onEmergencyCall,
 
   const progressPercentage = ((180 - timeLeft) / 180) * 100;
 
+  const handleEmergencyCall = () => {
+    setIsActive(false);
+    // Simulate actual emergency call
+    console.log('Auto-calling emergency services...');
+    alert('🚑 AUTOMATIC EMERGENCY CALL INITIATED!\n\nCalling 911...\n\nPlease prepare to:\n- State your location clearly\n- Describe the emergency\n- Follow operator instructions');
+    onEmergencyCall();
+  };
+
   const handleDismiss = () => {
     setIsActive(false);
     onDismiss();
@@ -48,14 +57,14 @@ export const EmergencyTimer: React.FC<EmergencyTimerProps> = ({ onEmergencyCall,
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center space-x-2 text-emergency">
           <AlertTriangle className="w-5 h-5" />
-          <span>Emergency Auto-Call</span>
+          <span>EMERGENCY AUTO-CALL</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="text-center">
           <div className="text-3xl font-bold text-emergency">{formatTime(timeLeft)}</div>
           <p className="text-sm text-muted-foreground">
-            Auto-calling emergency services if no action taken
+            Auto-dialing 911 if no action taken
           </p>
         </div>
 
@@ -70,11 +79,11 @@ export const EmergencyTimer: React.FC<EmergencyTimerProps> = ({ onEmergencyCall,
           <Button
             variant="emergency"
             size="sm"
-            onClick={onEmergencyCall}
+            onClick={handleEmergencyCall}
             className="flex-1"
           >
-            <Phone className="w-4 h-4 mr-2" />
-            Call Now
+            <Ambulance className="w-4 h-4 mr-2" />
+            Call 911 Now
           </Button>
           <Button
             variant="outline"
@@ -82,8 +91,12 @@ export const EmergencyTimer: React.FC<EmergencyTimerProps> = ({ onEmergencyCall,
             onClick={handleDismiss}
             className="flex-1"
           >
-            Dismiss
+            I'm Safe
           </Button>
+        </div>
+
+        <div className="text-xs text-muted-foreground text-center">
+          <p>This timer only activates for critical emergencies</p>
         </div>
       </CardContent>
     </Card>
